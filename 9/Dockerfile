@@ -518,6 +518,8 @@ RUN wget -q https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-
     ln -s /opt/arachni/bin/* /usr/local/bin/ && \
     rm -rf arachni*
 
+COPY config/openvas-manager.sh /etc/init.d/
+
 RUN mkdir -p /var/run/redis && \
     wget -q --no-check-certificate \
     https://raw.githubusercontent.com/kurobeats/OpenVas-Management-Scripts/master/openvas-check-setup \
@@ -527,15 +529,18 @@ RUN mkdir -p /var/run/redis && \
     sed -i 's/DAEMON_ARGS=""/DAEMON_ARGS="--mlisten 127.0.0.1 -m 9390 --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0"/' /etc/init.d/openvas-gsa && \
     sed -i '/^\[ -n "$HTTP_STS_MAX_AGE" \]/a[ -n "$PUBLIC_HOSTNAME" ] && DAEMON_ARGS="$DAEMON_ARGS --allow-header-host=$PUBLIC_HOSTNAME"' /etc/init.d/openvas-gsa && \
     sed -i 's/PORT_NUMBER=4000/PORT_NUMBER=443/' /etc/default/openvas-gsa && \
-    greenbone-nvt-sync > /dev/null && \
-    greenbone-scapdata-sync > /dev/null && \
-    greenbone-certdata-sync > /dev/null && \
+    echo 'MAX_EMAIL_ATTACHMENT_SIZE=-1'  >> /etc/default/openvas-manager && \
+    echo 'MAX_EMAIL_INCLUDE_SIZE=-1'  >> /etc/default/openvas-manager && \
+    greenbone-nvt-sync --curl --verbose && \
+    sleep 30 && \
+    greenbone-scapdata-sync --verbose && \
+    sleep 30 && \
+    greenbone-certdata-sync --verbose && \
     BUILD=true /start && \
     service openvas-scanner stop && \
     service openvas-manager stop && \
     service openvas-gsa stop && \
     service redis-server stop
-
 
 ENV BUILD=""
 
