@@ -33,8 +33,8 @@ SCRIPTNAME=/etc/init.d/$NAME
 # Update DAEMON_ARGS with optional settings from /etc/default
 [ -n "$LISTEN_ADDRESS" ] && DAEMON_ARGS="$DAEMON_ARGS --listen=$LISTEN_ADDRESS"
 [ -n "$PORT_NUMBER" ] && DAEMON_ARGS="$DAEMON_ARGS --port=$PORT_NUMBER"
-[-n "$MAX_EMAIL_ATTACHMENT_SIZE"] && DAEMON_ARGS="$DAEMON_ARGS --max-email-attachment-size=$MAX_EMAIL_ATTACHMENT_SIZE"
-[-n "$MAX_EMAIL_INCLUDE_SIZE"] && DAEMON_ARGS="$DAEMON_ARGS --max-email-include-size=$MAX_EMAIL_INCLUDE_SIZE"
+[ -n "$MAX_EMAIL_ATTACHMENT_SIZE" ] && DAEMON_ARGS="$DAEMON_ARGS --max-email-attachment-size=$MAX_EMAIL_ATTACHMENT_SIZE"
+[ -n "$MAX_EMAIL_INCLUDE_SIZE" ] && DAEMON_ARGS="$DAEMON_ARGS --max-email-include-size=$MAX_EMAIL_INCLUDE_SIZE"
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
